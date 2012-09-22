@@ -5,6 +5,24 @@
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
+
+      #eggintro{
+        position:absolute;
+        top:25%;
+        right:43%;
+        z-index:2;
+      }
+
+       #mamufas{
+        position:absolute;
+        width:2000px;
+        height:2000px;
+        background:#000;
+        opacity: 0.5;
+        top:0;
+        right:0;
+        z-index:1;
+      }
     </style>
     
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false">
@@ -16,18 +34,27 @@
 <script type="text/javascript" src="/javascripts/cartodb-gmapsv3-min.js"></script>
 
     <script type="text/javascript">
+
+      $(document).ready(function() {
+        $('#eggintro').click(function(){
+          $(this).fadeOut('fast');
+          $('#mamufas').fadeOut('fast');
+        })
+      });
+
       var map;
       var directionDisplay;
       var directionsService = new google.maps.DirectionsService();      
+
+
 
       function init(){
 
         var styles=[
           {
             "stylers": [
-              { "hue": "#44ff00" },
-              { "saturation": -92 },
-              { "lightness": -44 }
+              { "saturation": -50 },
+              { "lightness": 30 }
             ]
           }
         ];
@@ -112,6 +139,9 @@
   </head>
 
   <body onload="init()">
+    
+    <img src="/img/brown-egg.jpeg" id="eggintro">
+    <div id="mamufas">&nbsp;</div>
     <div id="map_canvas"></div>
   </body>  
 </html>
