@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class TwilioController < ApplicationController
 
   def add_user
