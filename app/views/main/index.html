@@ -16,6 +16,9 @@
 <script type="text/javascript" src="/javascripts/cartodb-gmapsv3-min.js"></script>
 
     <script type="text/javascript">
+      var map;
+      var directionDisplay;
+      var directionsService = new google.maps.DirectionsService();      
 
       function init(){
 
@@ -28,7 +31,7 @@
             ]
           }
         ];
-
+      
         var mapOptions = {
           center: new google.maps.LatLng(54.35413531021057, -2.5125),
           zoom: 6,
@@ -37,6 +40,9 @@
         };
 
         map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);  
+
+        directionsDisplay = new google.maps.DirectionsRenderer();    
+        directionsDisplay.setMap(map);
 
         var cartodb_gmapsv3 = new CartoDBLayer({
           map: map,
@@ -50,7 +56,56 @@
           featureOut: function() {},
           featureOver: function(feature, latlng, pos, data) {},          
         });
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+          error('not supported');
+        }
       }
+
+      function success(position) {       
+        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);       
+        var marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            title:"You are here!"
+        });
+
+        // get the closest egg from CartoDB
+        var sql = "https://eggsellence.cartodb.com/api/v1/sql?q=select%20ST_x(the_geom)%20as%20x,ST_y(the_geom)%20as%20y%20from%20eggs%20ORDER%20BY%20the_geom%20%3C-%3E%20st_setsrid(st_makepoint(" + position.coords.longitude + "," + position.coords.latitude + "),4326)%20LIMIT%201"
+        $.getJSON(sql, function(data) {
+          var nearestegg = data.rows[0];
+
+          // google directions routing to it
+          var start = latlng;
+          var end = new google.maps.LatLng(nearestegg.y, nearestegg.x);       
+          var request = {
+              origin:start,
+              destination:end,
+              travelMode: google.maps.DirectionsTravelMode.WALKING
+          };
+          directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay.setDirections(response);
+            }
+          });          
+        });
+
+
+
+
+        // set the bounds to match the google route....
+
+      }
+       
+      function error(msg) {
+        alert("sorry, we can't geolocate you.... :(");
+      }
+ 
+
+
+
 
     </script>
 
@@ -58,6 +113,5 @@
 
   <body onload="init()">
     <div id="map_canvas"></div>
-
   </body>  
 </html>
