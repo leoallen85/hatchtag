@@ -29,9 +29,8 @@
           }
         ];
 
-
         var mapOptions = {
-          center: new google.maps.LatLng(37.31512514748051, 137.63671875),
+          center: new google.maps.LatLng(54.35413531021057, -2.5125),
           zoom: 6,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           styles: styles        
@@ -47,10 +46,9 @@
           layer_order: "top",
           //tile_style: "#{{table_name}}{marker-fill:red}",
           interactivity: "cartodb_id, address",
-          featureClick: function(feature, latlng, pos, data) {alert(feature)},
+          featureClick: function(feature, latlng, pos, data) {console.log(feature)},
           featureOut: function() {},
-          featureOver: function(feature, latlng, pos, data) {},
-          auto_bound: true
+          featureOver: function(feature, latlng, pos, data) {},          
         });
       }
 
