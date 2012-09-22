@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>       
+    
+<link href="/stylesheets/cartodb-gmapsv3.css" rel="stylesheet" type="text/css">
+<link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />          
+<script type="text/javascript" src="/javascripts/wax.g.min.js"></script>
+<script type="text/javascript" src="/javascripts/cartodb-gmapsv3-min.js"></script>
+
+    <script type="text/javascript">
+
+      function init(){
+
+        var styles=[
+          {
+            "stylers": [
+              { "hue": "#44ff00" },
+              { "saturation": -92 },
+              { "lightness": -44 }
+            ]
+          }
+        ];
+
+
+        var mapOptions = {
+          center: new google.maps.LatLng(37.31512514748051, 137.63671875),
+          zoom: 6,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          styles: styles        
+        };
+
+        map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);  
+
+        var cartodb_gmapsv3 = new CartoDBLayer({
+          map: map,
+          user_name:'eggsellence',
+          table_name: 'eggs',
+          query: "SELECT * FROM {{table_name}}",
+          layer_order: "top",
+          //tile_style: "#{{table_name}}{marker-fill:red}",
+          interactivity: "cartodb_id, address",
+          featureClick: function(feature, latlng, pos, data) {alert(feature)},
+          featureOut: function() {},
+          featureOver: function(feature, latlng, pos, data) {},
+          auto_bound: true
+        });
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="init()">hello
+    <div id="map_canvas">hell</div>
+
+  </body>  
+</html>

@@ -2,28 +2,29 @@ class TwilioController < ApplicationController
 
   def add_user
     if params["Body"]
-      body = params["Body"].strip.downcase
+      @address = params["Body"].strip.downcase
+      @tel     = params["From"]
 
-      if body == "unsubscribe"
+      if @address == "unsubscribe"
         unsubscribe
       else
-        add_address(body)
+        add_address
       end
     end
   end
 
   private
 
-  def add_address(address)
+  def add_address
 
-    res = open(URI(URI::encode "http://maps.googleapis.com/maps/api/geocode/json?address=#{address}, UK&sensor=false&region=gb"))
+    res = open(URI(URI::encode "http://maps.googleapis.com/maps/api/geocode/json?address=#{@address}, UK&sensor=false&region=gb"))
     dat = JSON.parse(res.read)["results"][0]["geometry"]["location"]
 
     if dat
       lat = dat['lat']
       lng = dat['lng']
 
-      @sql = "INSERT INTO eggs (the_geom, address, telephone) VALUES (ST_GeomFromText('POINT(-71.2 42.5)', 4326),'lee cottage','+44blahblah') RETURNING cartodb_id"
+      @sql = "INSERT INTO eggs (the_geom, address, telephone) VALUES (ST_GeomFromText('POINT(#{lng} #{lat})', 4326),'#{@address}','#{@tel}') RETURNING cartodb_id"
       res = open(URI(URI::encode "http://eggsellence.cartodb.com/api/v2/sql?q=#{@sql}&api_key=a990bfe1d952be1de34e22a55b74d5e0e83b8d30"))
 
       send_message "You've now been added to Farm Finder! To unsubscribe please reply to this text with UNSUBSCRIBE"
@@ -46,7 +47,7 @@ class TwilioController < ApplicationController
     # send an sms
     @client.account.sms.messages.create(
       :from => params["To"],
-      :to => params["From"],
+      :to => @tel,
       :body => message_body
     )
   end
