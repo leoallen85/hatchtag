@@ -1,4 +1,6 @@
 FarmFinder::Application.routes.draw do
+
+  match 'twilio/add_user' => 'twilio#add_user'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
