@@ -35,7 +35,9 @@ class TwilioController < ApplicationController
     end
   end
 
-  def unsubscribe
+  def unsubscribe    
+    @sql = "DELETE FROM eggs WHERE telephone='#{@tel}'"
+    res = open(URI(URI::encode("http://eggsellence.cartodb.com/api/v2/sql?q=#{@sql}&api_key=a990bfe1d952be1de34e22a55b74d5e0e83b8d30")))    
     send_message "You've now been removed"
   end
 
